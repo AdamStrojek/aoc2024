@@ -40,28 +40,22 @@ fn solve_part2(file_name: &str) -> Result<u32> {
     let mut result = 0;
 
     for ((row, col), _) in data.indexed_iter() {
-        if check_word(&data, "MAS", row, col, 1, 1) && check_word(&data, "MAS", row+2, col, -1, 1) {
+        if check_word(&data, "MAS", row, col, 1, 1) && (check_word(&data, "MAS", row+2, col, -1, 1) || check_word(&data, "MAS", row, col+2, 1, -1)) {
             // M S
             //  A
             // M S
-            result += 1;
-        }
 
-        if check_word(&data, "MAS", row, col, 1, 1) && check_word(&data, "MAS", row, col+2, 1, -1) {
             // M M
             //  A
             // S S
             result += 1;
         }
 
-        if check_word(&data, "MAS", row, col, 1, -1) && check_word(&data, "MAS", row+2, col, -1, -1) {
+        if check_word(&data, "SAM", row, col, 1, 1) && (check_word(&data, "SAM", row+2, col, -1, 1) || check_word(&data, "SAM", row, col+2, 1, -1)) {
             // S M
             //  A
             // S M
-            result += 1;
-        }
 
-        if check_word(&data, "MAS", row, col, -1, 1) && check_word(&data, "MAS", row, col+2, -1, -1) {
             // S S
             //  A
             // M M
