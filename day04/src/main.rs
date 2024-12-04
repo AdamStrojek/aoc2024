@@ -1,28 +1,28 @@
 use std::fs;
 use anyhow::{Context, Result};
-use grid::{grid, Grid};
+use grid::Grid;
 
 fn main() -> Result<()> {
-    solve("example.txt")?;
-    solve("input.txt")?;
+    solve_part1("example.txt")?;
+    solve_part1("input.txt")?;
+
+    solve_part2("example.txt")?;
+    solve_part2("input.txt")?;
 
     Ok(())
 }
 
-fn solve(file_name: &str) -> Result<u32> {
+fn solve_part1(file_name: &str) -> Result<u32> {
     println!("Processing file: {file_name}");
 
     let data = load_data(file_name)?;
     let mut result = 0;
 
-    dbg!(&data);
-
     for ((row, col), _) in data.indexed_iter() {
         for dir_row in [-1, 0, 1] {
             for dir_col in [-1, 0, 1] {
-                if check_word(&data, row, col, dir_row, dir_col) {
+                if check_word(&data, "XMAS", row, col, dir_row, dir_col) {
                     result += 1;
-                    println!("Found: {row}x{col}");
                 }
             }
         }
@@ -33,8 +33,49 @@ fn solve(file_name: &str) -> Result<u32> {
     Ok(result)
 }
 
-fn check_word(data: &Grid<char>, pos_row: usize, pos_col: usize, dir_row: isize, dir_col: isize) -> bool {
-    for (pos, ch) in "XMAS".char_indices() {
+fn solve_part2(file_name: &str) -> Result<u32> {
+    println!("Processing file: {file_name}");
+
+    let data = load_data(file_name)?;
+    let mut result = 0;
+
+    for ((row, col), _) in data.indexed_iter() {
+        if check_word(&data, "MAS", row, col, 1, 1) && check_word(&data, "MAS", row+2, col, -1, 1) {
+            // M S
+            //  A
+            // M S
+            result += 1;
+        }
+
+        if check_word(&data, "MAS", row, col, 1, 1) && check_word(&data, "MAS", row, col+2, 1, -1) {
+            // M M
+            //  A
+            // S S
+            result += 1;
+        }
+
+        if check_word(&data, "MAS", row, col, 1, -1) && check_word(&data, "MAS", row+2, col, -1, -1) {
+            // S M
+            //  A
+            // S M
+            result += 1;
+        }
+
+        if check_word(&data, "MAS", row, col, -1, 1) && check_word(&data, "MAS", row, col+2, -1, -1) {
+            // S S
+            //  A
+            // M M
+            result += 1;
+        }
+    }
+
+    println!("Result: {result}");
+
+    Ok(result)
+}
+
+fn check_word(data: &Grid<char>, word: &str, pos_row: usize, pos_col: usize, dir_row: isize, dir_col: isize) -> bool {
+    for (pos, ch) in word.char_indices() {
         let data_ch = data.get(
             pos_row.wrapping_add_signed(dir_row * pos as isize),
             pos_col.wrapping_add_signed(dir_col * pos as isize)
